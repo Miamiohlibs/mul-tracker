@@ -114,7 +114,7 @@ function DisplayMain () {
     print '<input type="hidden" name="formname" value="userExit">';
     print '<input type="hidden" name="building" value="'.$currUserVisit['building'].'">';
     print '<input type="hidden" name="visitId" value="'.$currUserVisit['id'].'">';
-    print '<input type="submit" class="btn btn-warning" value="Exit '.$currUserVisit['building'].'" />';    
+    print '<input type="submit" class="btn btn-warning col-sm-12" value="Exit '.$currUserVisit['building'].'" />';    
     print '</form>';
   }
   print '</div>';
