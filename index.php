@@ -18,7 +18,7 @@ else {
 }
 
 function LoginBar($user = null) { 
-  print '<nav class="navbar">';
+  print '<nav class="navbar bg-light navbar-light">';
 
   if (is_null($user)) {
     $select = SelectUser();
@@ -26,7 +26,7 @@ function LoginBar($user = null) {
     print '<span class="ml-auto">';
     print '<form class="form-inline">'.PHP_EOL;
     print '<input type="hidden" name="formname" value="login">'.PHP_EOL;
-    print '<label for="username">Login as:</label>';
+    print '<label for="username" class="mr-1">Login as:</label>';
     print $select;
     print '<input type="submit" class="btn btn-primary btn-sm py-0">';
     print '</form>'.PHP_EOL;
@@ -34,7 +34,7 @@ function LoginBar($user = null) {
   }
 
   else { 
-  print '<span class="ml-auto">Logging information for: <span class="logging-name">'.$_SESSION['display_name'].'</span> <a href="./?formname=logout" class="btn btn-sm btn-danger p-0">Logout</a></span>';
+  print '<span class="ml-auto">Logging information for: <span class="logging-name">'.$_SESSION['display_name'].'</span> <a href="./?formname=logout" class="btn btn-sm btn-danger py-0">Logout</a></span>';
   }
 
   print '</nav>';
