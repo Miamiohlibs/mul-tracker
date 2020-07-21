@@ -77,37 +77,47 @@ function HandleForm() {
     list ($_SESSION['username'], $_SESSION['display_name']) = preg_split ('/\:\:/', $_REQUEST['username']);
   }
 
-  if ($_REQUEST['formname'] == 'logout') {
+  elseif ($_REQUEST['formname'] == 'logout') {
     session_destroy();
     session_start();
   }
 
-  if ($_REQUEST['formname'] == 'startUserSession') {
-    StartUserSession();
+  elseif ($_REQUEST['formname'] == 'startUserVisit') {
+    StartUserVisit();
   }
+
+  elseif ($_REQUEST['formname'] == 'userExit') {
+    EndUserVisit($_REQUEST['visitId'], $_REQUEST['building']);
+  }
+
 }
 
 function DisplayMain () {
   print '<div class="container">'.PHP_EOL;
-  $currUserSession = GetUserSession();
-  if ($currUserSession === false) { 
-    include("./forms/startUserSession.php");
+  $currUserVisit = GetUserVisit();
+  if ($currUserVisit === false) { 
+    include("./forms/startUserVisit.php");
   }
   else {
-    $time1 = new DateTime($currUserSession['time_in'], new DateTimeZone(DB_TIMEZONE));
+    $time1 = new DateTime($currUserVisit['time_in'], new DateTimeZone(DB_TIMEZONE));
     $time2 = new DateTime('now', new DateTimeZone(DB_TIMEZONE));
     //  print (date_format($time1, 'Y-m-d H:i:s'));
     // print (date_format($time2, 'Y-m-d H:i:s'));
 
     $timediff = $time1->diff($time2);
     $duration = $timediff->format('%y year %m month %d days %h hour %i minute %s second');
-    print 'You&apos;ve been in '.$currUserSession['building'].' since '.$currUserSession['time_in']. ' <br>' . $duration .PHP_EOL;
-    //    print_r($currUserSession);
+    print 'You&apos;ve been in '.$currUserVisit['building'].' since '.$currUserVisit['time_in']. ' <br>' . $duration .PHP_EOL;
+    print '<form method="POST">';
+    print '<input type="hidden" name="formname" value="userExit">';
+    print '<input type="hidden" name="building" value="'.$currUserVisit['building'].'">';
+    print '<input type="hidden" name="visitId" value="'.$currUserVisit['id'].'">';
+    print '<input type="submit" class="btn btn-warning" value="Exit '.$currUserVisit['building'].'" />';    
+    print '</form>';
   }
   print '</div>';
 }
 
-function GetUserSession() { 
+function GetUserVisit() { 
   global $pdo;
   $q = "SELECT * FROM sessions WHERE username = ? AND time_out IS NULL";
   $stmt = $pdo->prepare($q);
@@ -122,7 +132,7 @@ function GetUserSession() {
   }
 }
 
-function StartUserSession () {
+function StartUserVisit () {
   try {
     global $pdo;
     $q = "INSERT INTO `sessions` (`id`, `username`, `time_in`, `time_out`, `building`) VALUES (NULL, ? , now(), NULL, ?)";
@@ -138,5 +148,22 @@ function StartUserSession () {
     print_r ($e);
     print '</div>';
   }
+}
+
+function EndUserVisit($id, $bldg) {
+  try {
+    global $pdo;
+    $q = 'UPDATE sessions SET time_out = now() where id = ?';
+    $stmt = $pdo->prepare($q);
+    $stmt->bindValue(1, $id);
+    $stmt->execute();
+    $time = date('Y-m-d H:i:s');
+    print '<div class="alert alert-success">Recorded exiting '.$bldg.' at '.$time.'</div>';
+  } catch (PDOException $e) {
+    print '<div class="alert alert-danger">';
+    print_r ($e);
+    print '</div>';
+  }
+
 }
 ?>
