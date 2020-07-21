@@ -1,0 +1,18 @@
+body {
+  margin-bottom: 50px; /* Margin bottom by footer height */
+}
+.footer {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  height: 50px; /* Set the fixed height of the footer here */
+  line-height: 50px; /* Vertically center the text there */
+  font-size: 80%;
+}
+
+
+.bg-light { background-color: #eee !important; }
+.location { font-weight: bold }html {
+  position: relative;
+  min-height: 100%;
+}

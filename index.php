@@ -3,9 +3,22 @@ error_reporting(E_ALL);
 ini_set('display_errors',true);
 
 session_start();
+?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MUL Contact Tracker</title>
+<?php
 include('config.php'); // defines $pdo
 include('bootstrap.php');
+?>
+<link rel="stylesheet" href="styles.css" />
+</head>
+<body>
 
+<?
 /*** Handle Form Submit ***/
 
 if (isset($_REQUEST['formname'])) {
@@ -32,28 +45,27 @@ else {
   if (isset($alert)) { print '<div class="container">'.$alert.'</div>'; }
   DisplayMain();
 }
+?>
+<footer class="footer bg-light">
+<div class="container">
+Miami University Libraries - Contact Tracker
+</div>
+</footer>
+
+</body>
+</html>
+<?php
 /*** Scripts ***/
 
 function LoginBar($user = null) { 
-  print '<nav class="navbar bg-light navbar-light">';
+  print '<nav class="navbar bg-light navbar-light mb-2">';
 
   if (is_null($user)) {
-    $select = SelectUser();
-    
-    print '<span class="ml-auto">';
-    print '<form method="POST" class="form-inline">'.PHP_EOL;
-    print '<input type="hidden" name="formname" value="login">'.PHP_EOL;
-    print '<label for="username" class="mr-1">Login as:</label>';
-    print $select;
-    print '<input type="submit" class="btn btn-primary btn-sm py-0">';
-    print '</form>'.PHP_EOL;
-    print '</span>';
+    include('forms/loginForm.php');
   }
 
   else { 
-    print '<span class="ml-auto"><form class="form-inline" method="POST"><input type="hidden" name="formname" value="logout">';
-    print 'Logging information for: <span class="logging-name ml-1">'.$_SESSION['display_name'];
-    print '<input type="submit" class="btn btn-sm btn-danger ml-2 py-0" value="Logout" / ></form></span>';
+    include('forms/logoutForm.php');
   }
 
   print '</nav>';
@@ -108,13 +120,14 @@ function DisplayMain () {
     // print (date_format($time2, 'Y-m-d H:i:s'));
 
     $timediff = $time1->diff($time2);
-    $duration = $timediff->format('%y year %m month %d days %h hour %i minute %s second');
-    print 'You&apos;ve been in '.$currUserVisit['building'].' since '.$currUserVisit['time_in']. ' <br>' . $duration .PHP_EOL;
+    //    $duration = $timediff->format('%y year %m month %d days %h hour %i minute %s second');
+    $duration = $timediff->format('%d days %h hour %i minute %s second');
+    print 'You&apos;ve been in <span class="location">'.$currUserVisit['building'].'</span> since '.$currUserVisit['time_in']. ' <br>' . $duration .PHP_EOL;
     print '<form method="POST">';
     print '<input type="hidden" name="formname" value="userExit">';
     print '<input type="hidden" name="building" value="'.$currUserVisit['building'].'">';
     print '<input type="hidden" name="visitId" value="'.$currUserVisit['id'].'">';
-    print '<input type="submit" class="btn btn-warning col-sm-12" value="Exit '.$currUserVisit['building'].'" />';    
+    print '<input type="submit" class="btn btn-warning col-sm-12 mt-5" value="Exit '.$currUserVisit['building'].'" />';    
     print '</form>';
   }
   print '</div>';
