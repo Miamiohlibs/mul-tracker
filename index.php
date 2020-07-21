@@ -9,7 +9,7 @@ include('bootstrap.php');
 /*** Handle Form Submit ***/
 
 if (isset($_REQUEST['formname'])) {
-  HandleForm();
+  $alert = HandleForm();
 }
 
 /*** NavBar ***/
@@ -29,6 +29,7 @@ if (! isset($_SESSION['username'])) {
   print '</div>';
 }
 else { 
+  if (isset($alert)) { print '<div class="container">'.$alert.'</div>'; }
   DisplayMain();
 }
 /*** Scripts ***/
@@ -50,9 +51,9 @@ function LoginBar($user = null) {
   }
 
   else { 
-    print '<span class="ml-auto"><form class="form-inline"><input type="hidden" name="formname" value="logout">';
-    print 'Logging information for: <span class="logging-name">'.$_SESSION['display_name'];
-    print '<input type="submit" class="btn btn-sm btn-danger py-0" value="Logout" / ></form></span>';
+    print '<span class="ml-auto"><form class="form-inline" method="POST"><input type="hidden" name="formname" value="logout">';
+    print 'Logging information for: <span class="logging-name ml-1">'.$_SESSION['display_name'];
+    print '<input type="submit" class="btn btn-sm btn-danger ml-2 py-0" value="Logout" / ></form></span>';
   }
 
   print '</nav>';
@@ -73,6 +74,7 @@ function SelectUser() {
 
 function HandleForm() {
   //  print_r ($_REQUEST);
+  $alert = ''; 
   if ($_REQUEST['formname'] == 'login') {
     list ($_SESSION['username'], $_SESSION['display_name']) = preg_split ('/\:\:/', $_REQUEST['username']);
   }
@@ -83,13 +85,14 @@ function HandleForm() {
   }
 
   elseif ($_REQUEST['formname'] == 'startUserVisit') {
-    StartUserVisit();
+    $alert = StartUserVisit();
   }
 
   elseif ($_REQUEST['formname'] == 'userExit') {
-    EndUserVisit($_REQUEST['visitId'], $_REQUEST['building']);
+    $alert = EndUserVisit($_REQUEST['visitId'], $_REQUEST['building']);
   }
 
+  return $alert;
 }
 
 function DisplayMain () {
@@ -142,12 +145,13 @@ function StartUserVisit () {
     $stmt->bindValue(2, $bldg);
     $stmt->execute();
     $time = date('Y-m-d H:i:s');
-    print '<div class="alert alert-success">Recorded entering '.$bldg.' at '.$time.'</div>';
+    $alert = '<div class="alert alert-success">Recorded entering '.$bldg.' at '.$time.'</div>';
   } catch (PDOException $e) {
-    print '<div class="alert alert-danger">';
-    print_r ($e);
-    print '</div>';
+    $alert =  '<div class="alert alert-danger">';
+    $alert .= print_r ($e);
+    $alert .= print '</div>';
   }
+  return $alert;
 }
 
 function EndUserVisit($id, $bldg) {
@@ -158,12 +162,12 @@ function EndUserVisit($id, $bldg) {
     $stmt->bindValue(1, $id);
     $stmt->execute();
     $time = date('Y-m-d H:i:s');
-    print '<div class="alert alert-success">Recorded exiting '.$bldg.' at '.$time.'</div>';
+    $alert = '<div class="alert alert-success">Recorded exiting '.$bldg.' at '.$time.'</div>';
   } catch (PDOException $e) {
-    print '<div class="alert alert-danger">';
-    print_r ($e);
-    print '</div>';
+    $alert = '<div class="alert alert-danger">';
+    $alert .= print_r ($e, TRUE);
+    $alert .= print '</div>';
   }
-
+  return $alert;
 }
 ?>
