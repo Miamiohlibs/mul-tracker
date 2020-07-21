@@ -1,5 +1,9 @@
 <form method="POST">
    <input type="hidden" name="formname" value="startUserVisit" /> 
    <input type="hidden" name="username" value="<?php echo($_SESSION['username']); ?>" />
-   <input type="submit" class="btn btn-success" value="Enter building now" />
+<?php
+   foreach (BUILDINGS as $bldg) {
+   print '<input type="submit" class="btn btn-success mr-3" name="enterButton" value="Enter '. $bldg .' now" />';
+ }
+?>
 </form>

@@ -139,7 +139,9 @@ function StartUserVisit () {
   try {
     global $pdo;
     $q = "INSERT INTO `sessions` (`id`, `username`, `time_in`, `time_out`, `building`) VALUES (NULL, ? , now(), NULL, ?)";
-    $bldg = "King";
+    if (preg_match('/Enter (.*) now/', $_REQUEST['enterButton'], $m)) {
+      $bldg = $m[1];
+    }
     $stmt = $pdo->prepare($q);
     $stmt->bindValue(1, $_SESSION['username']);
     $stmt->bindValue(2, $bldg);
