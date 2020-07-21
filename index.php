@@ -62,7 +62,7 @@ function LoginBar($user = null) {
 function SelectUser() {
   $opts = '';
   global $pdo;
-  $q = "SELECT * FROM users";
+  $q = "SELECT * FROM users ORDER BY name ASC";
   $stmt = $pdo->query($q);
   $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
   foreach ($rows as $row) {
