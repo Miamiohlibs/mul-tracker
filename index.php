@@ -186,7 +186,12 @@ function EndUserVisit($id, $bldg) {
     $stmt->bindValue(1, $id);
     $stmt->execute();
     $time = date('Y-m-d H:i:s');
-    $alert = '<div class="alert alert-success">Recorded exiting '.$bldg.' at '.$time.'</div>';
+    if ($stmt->rowCount() == 1) {
+        $alert = '<div class="alert alert-success">Recorded exiting '.$bldg.' at '.$time.'</div>';
+    }
+    else {
+        $alert = '<div class="alert alert-danger">Failed to record exiting '.$bldg.' at '.$time.'</div>';
+    }
   } catch (PDOException $e) {
     $alert = '<div class="alert alert-danger">';
     $alert .= print_r ($e, TRUE);
