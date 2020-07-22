@@ -155,7 +155,7 @@ function GetUserVisit() {
 function StartUserVisit () {
   try {
     global $pdo;
-    $q = "INSERT INTO `sessions` (`id`, `username`, `time_in`, `time_out`, `building`) VALUES (NULL, ? , now(), NULL, ?)";
+    $q = "INSERT INTO `sessions` (`username`, `time_in`, `time_out`, `building`) VALUES (? , now(), NULL, ?)";
     if (preg_match('/Enter (.*) now/', $_REQUEST['enterButton'], $m)) {
       $bldg = $m[1];
     }
@@ -167,7 +167,7 @@ function StartUserVisit () {
     $alert = '<div class="alert alert-success">Recorded entering '.$bldg.' at '.$time.'</div>';
   } catch (PDOException $e) {
     $alert =  '<div class="alert alert-danger">';
-    $alert .= print_r ($e);
+    $alert .= print_r ($e, TRUE);
     $alert .= print '</div>';
   }
   return $alert;
