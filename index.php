@@ -162,9 +162,14 @@ function StartUserVisit () {
     $stmt = $pdo->prepare($q);
     $stmt->bindValue(1, $_SESSION['username']);
     $stmt->bindValue(2, $bldg);
-    $stmt->execute();
     $time = date('Y-m-d H:i:s');
-    $alert = '<div class="alert alert-success">Recorded entering '.$bldg.' at '.$time.'</div>';
+    $stmt->execute();
+    if ($stmt->rowCount() == 1) {
+        $alert = '<div class="alert alert-success">Recorded entering '.$bldg.' at '.$time.'</div>';
+    }
+    else {
+        $alert = '<div class="alert alert-danger">ERROR: Failed to record entering '.$bldg.' at '.$time.'</div>';
+    }
   } catch (PDOException $e) {
     $alert =  '<div class="alert alert-danger">';
     $alert .= print_r ($e, TRUE);
