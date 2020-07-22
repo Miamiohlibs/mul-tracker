@@ -17,7 +17,7 @@ include('bootstrap.php');
 </head>
 <body>
 
-<?
+<?php
 /*** Handle Form Submit ***/
 
 if (isset($_REQUEST['formname'])) {
