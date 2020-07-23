@@ -63,12 +63,13 @@ JOIN sessions b on a.time_in <= b.time_out
 }
 
 function OverlapTable($rows) {
+    $fmt = 'm-d H:i';
     $table = '<table class="table overlap">';
     $table .= '<thead>';
     $table .= '<tr><th class="subject">Subject Name</th> <th class="subject">Building</th> <th class="subject">Subj. In</th> <th class="subject">Subj. Out</th> <th class="coworker">Co-Worker Name</th> <th class="coworker">Co-Worker In</th> <th class="coworker">Co-Worker Out</th></tr>'.PHP_EOL;
     $table .= '</thead><tbody>';
     foreach ($rows as $r) {
-        $table .= '<tr><td class="subject">'.$r['subject_name'].'</td> <td class="subject">'.$r['building'].'</td> <td class="subject">'.$r['subject_in'].'</td> <td class="subject">'.$r['subject_out'].'</td> <td class="coworker">'.$r['cmp_name'].'</td> <td class="coworker">'.$r['cmp_in'].'</td> <td class="coworker">'.$r['cmp_out'].'</td></tr>'.PHP_EOL;
+        $table .= '<tr><td class="subject">'.$r['subject_name'].'</td> <td class="subject">'.$r['building'].'</td> <td class="subject">'.date($fmt, strtotime($r['subject_in'])).'</td> <td class="subject">'.date($fmt, strtotime($r['subject_out'])).'</td> <td class="coworker">'.$r['cmp_name'].'</td> <td class="coworker">'.date($fmt, strtotime($r['cmp_in'])).'</td> <td class="coworker">'.date($fmt, strtotime($r['cmp_out'])).'</td></tr>'.PHP_EOL;
     }
     $table .= '</tbody></table>';
     return $table;
