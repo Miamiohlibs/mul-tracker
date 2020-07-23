@@ -31,6 +31,15 @@ include('../config.php');
 include('../ui_scripts.php');
 include('../bootstrap.php');
 ?>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css" />
+<script>
+$(document).ready(function() {
+    $('.datepicker').datepicker({
+            format: 'yyyy-mm-dd'
+        });
+    });
+</script>
 <link rel="stylesheet" href="../styles.css" />
 </head>
 <body>
@@ -50,14 +59,14 @@ include('../bootstrap.php');
 <div class="input-group mr-2">
 <div class="input-group-prepend">
 <label for="startRange" class="input-group-text">From:</label>
-<input type="text" name="startRange" placeholder="Start Date" value="<?php print($_SESSION['startRange']); ?>">
+<input type="text" id="startRange" name="startRange" placeholder="Start Date" value="<?php print($_SESSION['startRange']); ?>" class="datepicker">
 </div>
 </div>
 
 <div class="input-group mr-3">
 <div class="input-group-prepend">
 <label for="endRange" class="input-group-text">To:</label>
-<input type="text" name="endRange" placeholder="End Date" value="<?php print($_SESSION['endRange']); ?>">
+<input type="text" id="startRange" name="endRange" placeholder="End Date" value="<?php print($_SESSION['endRange']); ?>" class="datepicker">
 </div>
 </div>
 
