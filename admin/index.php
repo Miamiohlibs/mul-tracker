@@ -15,7 +15,7 @@ include('../config.php');
 include('../ui_scripts.php');
 include('../bootstrap.php');
 ?>
-<link rel="stylesheet" href="styles.css" />
+<link rel="stylesheet" href="../styles.css" />
 </head>
 <body>
 <nav class="navbar bg-light navbar-light mb-2">
