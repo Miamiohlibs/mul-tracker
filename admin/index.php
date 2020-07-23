@@ -32,18 +32,20 @@ include('../bootstrap.php');
 <div class="main container">
     <?php
     if ($_REQUEST['formname'] == 'adminOverlap') {
-        GetOverlap($_SESSION['username']);
+        $rows = GetOverlap($_SESSION['username']);
+        print (OverlapTable($rows));
     }
     ?>
 </div>
-
+</body>
+</html>
 
 
 <?php
 function GetOverlap($user, $start=null, $end=null) {
 // https://stackoverflow.com/questions/6571538/checking-a-table-for-time-overlap
     print '<h2>Getting building overlaps for: '.$_SESSION['display_name'].'</h2>'.PHP_EOL;
-$q ="SELECT a.username as subject_name, a.time_in as subject_in, a.time_out as subject_out, a.building as building, b.username as cmp_name, b.time_in as cmp_in, b.time_out as subj_out
+$q ="SELECT a.username as subject_name, a.time_in as subject_in, a.time_out as subject_out, a.building as building, b.username as cmp_name, b.time_in as cmp_in, b.time_out as cmp_out
 FROM sessions  a
 JOIN sessions b on a.time_in <= b.time_out
     and a.time_out >= b.time_in
@@ -57,11 +59,18 @@ JOIN sessions b on a.time_in <= b.time_out
     $stmt->bindValue(1, $_SESSION['username']);
     $stmt->execute();
     $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
-    print '<pre>';
-    print_r($rows);
-    print '</pre>';
+    return($rows);
 }
 
+function OverlapTable($rows) {
+    $table = '<table class="table overlap">';
+    $table .= '<thead>';
+    $table .= '<tr><th class="subject">Subject Name</th> <th class="subject">Building</th> <th class="subject">Subj. In</th> <th class="subject">Subj. Out</th> <th class="coworker">Co-Worker Name</th> <th class="coworker">Co-Worker In</th> <th class="coworker">Co-Worker Out</th></tr>'.PHP_EOL;
+    $table .= '</thead><tbody>';
+    foreach ($rows as $r) {
+        $table .= '<tr><td class="subject">'.$r['subject_name'].'</td> <td class="subject">'.$r['building'].'</td> <td class="subject">'.$r['subject_in'].'</td> <td class="subject">'.$r['subject_out'].'</td> <td class="coworker">'.$r['cmp_name'].'</td> <td class="coworker">'.$r['cmp_in'].'</td> <td class="coworker">'.$r['cmp_out'].'</td></tr>'.PHP_EOL;
+    }
+    $table .= '</tbody></table>';
+    return $table;
+}
 ?>
-</body>
-</html>
