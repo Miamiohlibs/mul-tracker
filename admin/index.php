@@ -45,12 +45,14 @@ include('../bootstrap.php');
 function GetOverlap($user, $start=null, $end=null) {
 // https://stackoverflow.com/questions/6571538/checking-a-table-for-time-overlap
     print '<h2>Getting building overlaps for: '.$_SESSION['display_name'].'</h2>'.PHP_EOL;
-$q ="SELECT a.username as subject_name, a.time_in as subject_in, a.time_out as subject_out, a.building as building, b.username as cmp_name, b.time_in as cmp_in, b.time_out as cmp_out
+$q ="SELECT a.username as subject_name, a.time_in as subject_in, a.time_out as subject_out, a.building as building, b.building as b_building, b.username as cmp_name, b.time_in as cmp_in, b.time_out as cmp_out
 FROM sessions  a
 JOIN sessions b on a.time_in <= b.time_out
     and a.time_out >= b.time_in
     and a.username != b.username
-    WHERE a.username = ?";
+    WHERE a.username = ? 
+    AND a.building = b.building
+";
 
     print '<div class="alert alert-info">'.$q.'</div>'.PHP_EOL;
     
@@ -63,15 +65,34 @@ JOIN sessions b on a.time_in <= b.time_out
 }
 
 function OverlapTable($rows) {
-    $fmt = 'm-d H:i';
+    $names = GetNames();
+    $fmt = 'M d H:i';
     $table = '<table class="table overlap">';
     $table .= '<thead>';
     $table .= '<tr><th class="subject">Subject Name</th> <th class="subject">Building</th> <th class="subject">Subj. In</th> <th class="subject">Subj. Out</th> <th class="coworker">Co-Worker Name</th> <th class="coworker">Co-Worker In</th> <th class="coworker">Co-Worker Out</th></tr>'.PHP_EOL;
     $table .= '</thead><tbody>';
     foreach ($rows as $r) {
-        $table .= '<tr><td class="subject">'.$r['subject_name'].'</td> <td class="subject">'.$r['building'].'</td> <td class="subject">'.date($fmt, strtotime($r['subject_in'])).'</td> <td class="subject">'.date($fmt, strtotime($r['subject_out'])).'</td> <td class="coworker">'.$r['cmp_name'].'</td> <td class="coworker">'.date($fmt, strtotime($r['cmp_in'])).'</td> <td class="coworker">'.date($fmt, strtotime($r['cmp_out'])).'</td></tr>'.PHP_EOL;
+        $subj_user = $r['subject_name'];
+        $subj_name = $names[$subj_user];
+        $cmp_user  = $r['cmp_name'];
+        $cmp_name  = $names[$cmp_user];
+        $table .= '<tr><td class="subject">'.$subj_name.'</td> <td class="subject">'.$r['building'].'</td> <td class="subject">'.date($fmt, strtotime($r['subject_in'])).'</td> <td class="subject">'.date($fmt, strtotime($r['subject_out'])).'</td> <td class="coworker">'.$cmp_name.'</td> <td class="coworker">'.date($fmt, strtotime($r['cmp_in'])).'</td> <td class="coworker">'.date($fmt, strtotime($r['cmp_out'])).'</td></tr>'.PHP_EOL;
     }
     $table .= '</tbody></table>';
     return $table;
+}
+
+function GetNames() {
+    global $pdo;
+    $q = "SELECT * FROM users";
+    $stmt = $pdo->query($q);
+    $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    $arr = [];
+    foreach ($rows as $r) {
+        $name = $r['name'];
+        $username = $r['username'];
+        $arr[$username] = $name;
+    }
+    return $arr;
 }
 ?>
