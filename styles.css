@@ -16,3 +16,5 @@ body {
   position: relative;
   min-height: 100%;
 }
+.subject { background-color: palegreen}
+.coworker { background-color: lemonchiffon}
