@@ -1,8 +1,24 @@
 <?php
 session_start();
-if (array_key_exists('username', $_REQUEST)) {
-    list ($_SESSION['username'], $_SESSION['display_name']) = preg_split ('/\:\:/', $_REQUEST['username']);
+HandleAdminSubmit();
+function HandleAdminSubmit() {
+    if (array_key_exists('username', $_REQUEST)) {
+        list ($_SESSION['username'], $_SESSION['display_name']) = preg_split ('/\:\:/', $_REQUEST['username']);
+    }
+    if (array_key_exists('startRange', $_REQUEST)) {
+        $_SESSION['startRange'] = $_REQUEST['startRange'];
+    } 
+    else { 
+        $_SESSION['startRange'] = date("Y-m-d",strtotime("-3 weeks"));
+    }
+    if (array_key_exists('endRange', $_REQUEST)) {
+        $_SESSION['endRange'] = $_REQUEST['endRange'];
+    } 
+    else { 
+        $_SESSION['endRange'] = date("Y-m-d");
+    }
 }
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -19,15 +35,37 @@ include('../bootstrap.php');
 </head>
 <body>
 <nav class="navbar bg-light navbar-light mb-2">
-
+<div class="navbar-brand">MUL Tracker Admin Console</div>
 </nav>
 <div class="container">
-<form method="POST">
+<form method="POST" class="form form-inline mb-3 mt-3">
 <input type="hidden" name="formname" value="adminOverlap">
-<label for="username">View overlap with user</label> <?php print(SelectUser($_SESSION['username']));?>
-<input type="submit" class="btn btn-primary btn-sm py-1" />
+
+<div class="input-group mr-2 mb-2">
+<div class="input-group-prepend">
+<label for="username" class="input-group-text">View overlap with user</label> <?php print(SelectUser($_SESSION['username']));?>
+</div>
+</div>
+
+<div class="input-group mr-2">
+<div class="input-group-prepend">
+<label for="startRange" class="input-group-text">From:</label>
+<input type="text" name="startRange" placeholder="Start Date" value="<?php print($_SESSION['startRange']); ?>">
+</div>
+</div>
+
+<div class="input-group mr-3">
+<div class="input-group-prepend">
+<label for="endRange" class="input-group-text">To:</label>
+<input type="text" name="endRange" placeholder="End Date" value="<?php print($_SESSION['endRange']); ?>">
+</div>
+</div>
+
+<input type="submit" class="btn btn-primary py-1" />
+
 </form>
 </div>
+
 
 <div class="main container">
     <?php
@@ -52,13 +90,18 @@ JOIN sessions b on a.time_in <= b.time_out
     and a.username != b.username
     WHERE a.username = ? 
     AND a.building = b.building
-";
+    AND (a.time_in BETWEEN ? AND ? 
+    OR   a.time_out BETWEEN ? AND ? )";
 
     print '<div class="alert alert-info">'.$q.'</div>'.PHP_EOL;
     
     global $pdo;
     $stmt = $pdo->prepare($q); 
     $stmt->bindValue(1, $_SESSION['username']);
+    $stmt->bindValue(2, $_SESSION['startRange'] . ' 00:00:00');
+    $stmt->bindValue(3, $_SESSION['endRange']   . ' 23:59:59');
+    $stmt->bindValue(4, $_SESSION['startRange'] . ' 00:00:00');
+    $stmt->bindValue(5, $_SESSION['endRange']   . ' 23:59:59');
     $stmt->execute();
     $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
     return($rows);
@@ -69,7 +112,7 @@ function OverlapTable($rows) {
     $fmt = 'M d H:i';
     $table = '<table class="table overlap">';
     $table .= '<thead>';
-    $table .= '<tr><th class="subject">Subject Name</th> <th class="subject">Building</th> <th class="subject">Subj. In</th> <th class="subject">Subj. Out</th> <th class="coworker">Co-Worker Name</th> <th class="coworker">Co-Worker In</th> <th class="coworker">Co-Worker Out</th></tr>'.PHP_EOL;
+    $table .= '<tr><th class="subject">Subject Name</th> <th class="subject">Building</th> <th class="subject">Subject In</th> <th class="subject">Subject Out</th> <th class="coworker">Co-Worker Name</th> <th class="coworker">Co-Worker In</th> <th class="coworker">Co-Worker Out</th></tr>'.PHP_EOL;
     $table .= '</thead><tbody>';
     foreach ($rows as $r) {
         $subj_user = $r['subject_name'];
