@@ -30,7 +30,7 @@ function SelectUser($remember_name='') {
 
     $opts .= '<option value="'.$row['username'].'::'.$row['name'].'"'.$s.'>'.$row['name'].'</option>'.PHP_EOL;
   }
-  return '<select name="username">'.$opts.'</select>'.PHP_EOL;
+  return '<select name="username" class="form-control">'.$opts.'</select>'.PHP_EOL;
 }
 
 
