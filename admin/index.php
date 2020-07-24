@@ -49,7 +49,7 @@ $(document).ready(function() {
 <div class="container">
 <form method="POST" class="form form-inline mb-3 mt-3">
 <input type="hidden" name="formname" value="adminOverlap">
-<div class="input-group mr-2 mb-2">
+<div class="input-group mr-2">
 <div class="input-group-prepend">
 <label for="username" class="input-group-text">View overlap with user</label> <?php print(SelectUser($_SESSION['username']));?>
 </div>
@@ -90,7 +90,7 @@ $(document).ready(function() {
 <?php
 function GetOverlap($user, $start=null, $end=null) {
 // https://stackoverflow.com/questions/6571538/checking-a-table-for-time-overlap
-    print '<h2>Getting building overlaps for: '.$_SESSION['display_name'].'</h2>'.PHP_EOL;
+    print '<h1 class="h2 mb-4">Getting building overlaps for: '.$_SESSION['display_name'].'</h1>'.PHP_EOL;
 $q ="SELECT a.username as subject_name, a.time_in as subject_in, a.time_out as subject_out, a.building as building, b.building as b_building, b.username as cmp_name, b.time_in as cmp_in, b.time_out as cmp_out
 FROM sessions  a
 JOIN sessions b on a.time_in <= b.time_out
