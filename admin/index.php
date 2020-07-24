@@ -49,7 +49,6 @@ $(document).ready(function() {
 <div class="container">
 <form method="POST" class="form form-inline mb-3 mt-3">
 <input type="hidden" name="formname" value="adminOverlap">
-
 <div class="input-group mr-2 mb-2">
 <div class="input-group-prepend">
 <label for="username" class="input-group-text">View overlap with user</label> <?php print(SelectUser($_SESSION['username']));?>
@@ -59,14 +58,14 @@ $(document).ready(function() {
 <div class="input-group mr-2">
 <div class="input-group-prepend">
 <label for="startRange" class="input-group-text">From:</label>
-<input type="text" id="startRange" name="startRange" placeholder="Start Date" value="<?php print($_SESSION['startRange']); ?>" class="datepicker">
+<input type="text" id="startRange" name="startRange" placeholder="Start Date" value="<?php print($_SESSION['startRange']); ?>" class="form-control datepicker">
 </div>
 </div>
 
 <div class="input-group mr-3">
 <div class="input-group-prepend">
 <label for="endRange" class="input-group-text">To:</label>
-<input type="text" id="startRange" name="endRange" placeholder="End Date" value="<?php print($_SESSION['endRange']); ?>" class="datepicker">
+<input type="text" id="startRange" name="endRange" placeholder="End Date" value="<?php print($_SESSION['endRange']); ?>" class="form-control datepicker">
 </div>
 </div>
 
