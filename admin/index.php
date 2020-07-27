@@ -79,7 +79,11 @@ $(document).ready(function() {
     <?php
     if ($_REQUEST['formname'] == 'adminOverlap') {
         $rows = GetOverlap($_SESSION['username']);
-        print (OverlapTable($rows));
+        if (sizeof($rows) >0) {
+            print (OverlapTable($rows));
+        } else { 
+            print '<div class="alert alert-info">No overlap results found for <b>'.$_SESSION['display_name'].'</b>.</div>'.PHP_EOL;
+        }
     }
     ?>
 </div>
@@ -88,7 +92,7 @@ $(document).ready(function() {
 
 
 <?php
-function GetOverlap($user, $start=null, $end=null) {
+function GetOverlap($user) {
 // https://stackoverflow.com/questions/6571538/checking-a-table-for-time-overlap
     print '<h1 class="h2 mb-4">Getting building overlaps for: '.$_SESSION['display_name'].'</h1>'.PHP_EOL;
 $q ="SELECT a.username as subject_name, a.time_in as subject_in, a.time_out as subject_out, a.building as building, b.building as b_building, b.username as cmp_name, b.time_in as cmp_in, b.time_out as cmp_out
@@ -101,7 +105,7 @@ JOIN sessions b on a.time_in <= b.time_out
     AND (a.time_in BETWEEN ? AND ? 
     OR   a.time_out BETWEEN ? AND ? )";
 
-    print '<div class="alert alert-info">'.$q.'</div>'.PHP_EOL;
+    print '<!--div class="alert alert-info">'.$q.'</div-->'.PHP_EOL;
     
     global $pdo;
     $stmt = $pdo->prepare($q); 
