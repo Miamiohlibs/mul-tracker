@@ -1,7 +1,8 @@
 <?php
 session_start();
-HandleAdminSubmit();
-function HandleAdminSubmit() {
+HandleOverlapSubmit();
+
+function HandleOverlapSubmit() {
     if (array_key_exists('username', $_REQUEST)) {
         list ($_SESSION['username'], $_SESSION['display_name']) = preg_split ('/\:\:/', $_REQUEST['username']);
     }
@@ -69,14 +70,18 @@ $(document).ready(function() {
 </div>
 </div>
 
-<input type="submit" class="btn btn-primary py-1" />
+<input type="submit" class="btn btn-primary py-1" value="Find Overlaps"/>
+</form>
 
+<form class="form" method="POST">
+<input type="hidden" name="formname" value="GetNow">
+<input type="submit" class="btn btn-danger w-100" value="Who is in the building now?">
 </form>
 </div>
 
 
 <div class="main container">
-    <?php
+<?php
     if ($_REQUEST['formname'] == 'adminOverlap') {
         $rows = GetOverlap($_SESSION['username']);
         if (sizeof($rows) >0) {
@@ -85,6 +90,22 @@ $(document).ready(function() {
             print '<div class="alert alert-info">No overlap results found for <b>'.$_SESSION['display_name'].'</b>.</div>'.PHP_EOL;
         }
     }
+elseif ($_REQUEST['formname'] == 'GetNow') {
+    $rows = GetNow();
+/*
+    print ('<pre>');
+    var_dump($rows);
+    print ('</pre>');
+*/
+    $currBuilding = '';
+    foreach ($rows as $row) {
+        if ($row['building'] != $currBuilding) { 
+            print '<h2>'.$row['building'].'</h2>';
+            $currBuilding = $row['building'];
+        }
+        print '<li>'.$row['name'].'</li>';
+    }
+}
     ?>
 </div>
 </body>
@@ -92,6 +113,14 @@ $(document).ready(function() {
 
 
 <?php
+function GetNow() {
+    global $pdo;
+    $q = 'SELECT name,building,time_in FROM sessions,users WHERE time_out IS NULL AND users.username = sessions.username ORDER BY building';
+    return ($pdo->query($q)->fetchAll(PDO::FETCH_ASSOC));
+
+}
+
+
 function GetOverlap($user) {
 // https://stackoverflow.com/questions/6571538/checking-a-table-for-time-overlap
     print '<h1 class="h2 mb-4">Getting building overlaps for: '.$_SESSION['display_name'].'</h1>'.PHP_EOL;
